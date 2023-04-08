@@ -1,7 +1,10 @@
 package antifraud.businesslayer;
 
+import javax.validation.constraints.NotNull;
+
 public class Transaction {
-    Long amount;
+    @NotNull
+    long amount;
 
     public Transaction() {
     }
