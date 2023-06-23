@@ -31,12 +31,25 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests() // manage access
                 .antMatchers(HttpMethod.POST, "/api/auth/user").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/auth/list").authenticated()
+                .antMatchers(HttpMethod.DELETE, "/api/auth/user/{username}").authenticated()
+                .antMatchers(HttpMethod.POST, "/api/antifraud/transaction").authenticated()
                 .antMatchers("/actuator/shutdown").permitAll() // needs to run test
                 // other matchers
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS); // no session
         return http.build();
+    }
+
+    @Bean
+    public InMemoryUserDetailsManager InMemory() {
+        UserDetails user = User.builder()
+                .username("test")
+                .password(getEncoder().encode("test"))
+                .roles()
+                .build();
+        return new InMemoryUserDetailsManager(user);
     }
 
     @Bean
