@@ -19,18 +19,18 @@ public class TransactionController {
     @PostMapping(path = "/api/antifraud/transaction", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity makeTransaction(@Valid @RequestBody Transaction transaction) {
-            Map<String, String> response;
-            long amount = transaction.getAmount();
-            if (amount > 0 && amount <= 200) {
-                response = Map.of("result", "ALLOWED");
-                return ResponseEntity.ok().body(response);
-            } else if (amount > 200 && amount <= 1500) {
-                response = Map.of("result", "MANUAL_PROCESSING");
-                return ResponseEntity.ok().body(response);
-            } else if (amount > 1500) {
-                response = Map.of("result", "PROHIBITED");
-                return ResponseEntity.ok().body(response);
-            }
+        Map<String, String> response;
+        long amount = transaction.getAmount();
+        if (amount > 0 && amount <= 200) {
+            response = Map.of("result", "ALLOWED");
+            return ResponseEntity.ok().body(response);
+        } else if (amount > 200 && amount <= 1500) {
+            response = Map.of("result", "MANUAL_PROCESSING");
+            return ResponseEntity.ok().body(response);
+        } else if (amount > 1500) {
+            response = Map.of("result", "PROHIBITED");
+            return ResponseEntity.ok().body(response);
+        }
         return ResponseEntity.badRequest().body(HttpStatus.BAD_REQUEST);
     }
 }
