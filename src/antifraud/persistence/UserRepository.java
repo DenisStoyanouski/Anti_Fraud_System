@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /*
@@ -29,6 +30,14 @@ public class UserRepository {
         return users.values().stream().toList();
     }
 
-
-
+    public boolean remove(String username) {
+        boolean isDeleted = false;
+        for(var entry : users.entrySet()) {
+            if (Objects.equals(entry.getValue().getUsername(), username)) {
+                users.remove(entry.getKey());
+                isDeleted = true;
+            }
+        }
+        return isDeleted;
+    }
 }

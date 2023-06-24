@@ -43,9 +43,10 @@ public class SecurityConfig {
                 .authorizeRequests() // manage access
                 .antMatchers(HttpMethod.POST, "/api/auth/user").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/auth/list").authenticated()
-                .antMatchers(HttpMethod.DELETE, "/api/auth/user/{username}").authenticated()
+                .antMatchers(HttpMethod.DELETE,"/api/auth/user/{username}").authenticated()
                 .antMatchers(HttpMethod.POST, "/api/antifraud/transaction").authenticated()
-                .antMatchers("/actuator/shutdown").permitAll() // needs to run test
+                .antMatchers("/actuator/shutdown").permitAll()// needs to run test
+                .anyRequest().authenticated()
                 // other matchers
                 .and()
                 .sessionManagement()

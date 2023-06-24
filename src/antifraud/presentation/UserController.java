@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class UserController {
@@ -37,4 +38,11 @@ public class UserController {
         return userRepo.findAllUsers();
     }
 
+    @DeleteMapping(path = "/api/auth/user/{username}")
+    public ResponseEntity removeUser(@PathVariable String username) {
+        if(userRepo.remove(username)) {
+            return ResponseEntity.ok(Map.of("username", "\"" + username + "\"", "status", "Deleted successfully!"));
+        }
+        return (ResponseEntity) ResponseEntity.ok();
+    }
 }
