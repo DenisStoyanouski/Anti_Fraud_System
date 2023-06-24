@@ -19,5 +19,6 @@ public class User {
     @NotBlank
     @JsonProperty(required = true, access = JsonProperty.Access.WRITE_ONLY)
     private String password;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String role; // should be prefixed with ROLE_
 }

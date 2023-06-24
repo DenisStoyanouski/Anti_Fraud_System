@@ -2,6 +2,8 @@ package antifraud.persistence;
 
 import antifraud.businesslayer.User;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -22,4 +24,11 @@ public class UserRepository {
     public void save(User user) {
         users.put(user.getUsername(), user);
     }
+
+    public List<User> findAllUsers() {
+        return users.values().stream().toList();
+    }
+
+
+
 }

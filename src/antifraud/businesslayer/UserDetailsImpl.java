@@ -6,7 +6,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-
 public class UserDetailsImpl implements UserDetails {
     private final String username;
     private final String password;
@@ -15,7 +14,7 @@ public class UserDetailsImpl implements UserDetails {
     public UserDetailsImpl(User user) {
         username = user.getUsername();
         password = user.getPassword();
-        rolesAndAuthorities = List.of(new SimpleGrantedAuthority("USER_ROLE"));
+        rolesAndAuthorities = List.of(new SimpleGrantedAuthority("USER"));
     }
 
     @Override
