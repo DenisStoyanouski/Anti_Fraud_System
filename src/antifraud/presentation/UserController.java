@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.websocket.server.PathParam;
 import java.util.List;
 import java.util.Map;
 
@@ -38,11 +39,12 @@ public class UserController {
         return userRepo.findAllUsers();
     }
 
-    @DeleteMapping(path = "/api/auth/user/{username}")
-    public ResponseEntity removeUser(@PathVariable String username) {
+    @DeleteMapping("/api/auth/user/{username}")
+    @ResponseBody
+    public ResponseEntity removeUser(@PathVariable String username) {System.out.println(username);
         if(userRepo.remove(username)) {
-            return ResponseEntity.ok(Map.of("username", "\"" + username + "\"", "status", "Deleted successfully!"));
+            return ResponseEntity.ok(Map.of("username",  username, "status", "Deleted successfully!"));
         }
-        return (ResponseEntity) ResponseEntity.ok();
+        return ResponseEntity.ok().body(username);
     }
 }
