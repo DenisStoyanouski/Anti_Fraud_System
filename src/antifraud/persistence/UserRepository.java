@@ -1,12 +1,10 @@
 package antifraud.persistence;
 
 import antifraud.businesslayer.User;
-import org.springframework.stereotype.Component;
+import org.springframework.data.repository.CrudRepository;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
+import javax.transaction.Transactional;
+import java.util.Optional;
 
 /*
 How can we connect a database instead of a Map? There are a lot of ways to do it. In our case, we can remove
@@ -14,30 +12,13 @@ the Map with user data and connect the findUserByUsername and save methods of Us
 To learn how to work with databases, see our topics on Spring Data.
 */
 
-@Component
-public class UserRepository {
-    final private Map<String, User> users = new ConcurrentHashMap<>();
+public interface UserRepository extends CrudRepository<User, Long> {
+    Optional<User> findByUsername(String username);
+    Iterable<User> findAll();
 
-    public User findUserByUsername(String username) {
-        return users.get(username);
-    }
+    boolean existsByUsername(String username);
 
-    public void save(User user) {
-        users.put(user.getUsername(), user);
-    }
+    @Transactional
+    void deleteByUsername(String username);
 
-    public List<User> findAllUsers() {
-        return users.values().stream().toList();
-    }
-
-    public boolean remove(String username) {
-        boolean isDeleted = false;
-        for(var entry : users.entrySet()) {
-            if (Objects.equals(entry.getValue().getUsername(), username)) {
-                users.remove(entry.getKey());
-                isDeleted = true;
-            }
-        }
-        return isDeleted;
-    }
 }
