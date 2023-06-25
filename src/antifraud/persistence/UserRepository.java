@@ -15,9 +15,7 @@ To learn how to work with databases, see our topics on Spring Data.
 public interface UserRepository extends CrudRepository<User, Long> {
     Optional<User> findByUsername(String username);
     Iterable<User> findAll();
-
     boolean existsByUsername(String username);
-
     @Transactional
     void deleteByUsername(String username);
 

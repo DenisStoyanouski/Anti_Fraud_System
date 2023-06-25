@@ -7,7 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 
@@ -21,11 +20,11 @@ import javax.validation.constraints.NotBlank;
 public class User {
     @Id
     @GeneratedValue
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     long id;
     @NotBlank
     private String name;
     @NotBlank
-    @Email
     private String username;
     @NotBlank
     @JsonProperty(required = true, access = JsonProperty.Access.WRITE_ONLY)
