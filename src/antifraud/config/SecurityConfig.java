@@ -1,5 +1,6 @@
 package antifraud.config;
 
+import antifraud.businesslayer.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,11 +42,11 @@ public class SecurityConfig {
                 .csrf().disable().headers().frameOptions().disable() // for Postman, the H2 console
                 .and()
                 .authorizeRequests() // manage access
-                .antMatchers(HttpMethod.POST, "/api/auth/user").permitAll()
-                .antMatchers(HttpMethod.DELETE, "/api/auth/user").authenticated()
-                .antMatchers(HttpMethod.GET, "/api/auth/list").authenticated()
-                .antMatchers(HttpMethod.POST, "/api/antifraud/transaction").authenticated()
+                .antMatchers(HttpMethod.DELETE, "/api/auth/user").hasAuthority(Role.ADMINISTRATOR.name())
+                .antMatchers(HttpMethod.GET, "/api/auth/list").hasAnyAuthority(Role.ADMINISTRATOR.name(), Role.SUPPORT.name())
+                .antMatchers(HttpMethod.POST, "/api/antifraud/transaction").hasAuthority(Role.MERCHANT.name())
                 .antMatchers("/actuator/shutdown").permitAll()// needs to run test
+                .antMatchers(HttpMethod.POST, "/api/auth/user").permitAll()
                 .anyRequest().authenticated()
                 // other matchers
                 .and()

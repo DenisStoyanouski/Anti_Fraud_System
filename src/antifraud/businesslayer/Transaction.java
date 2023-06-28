@@ -7,7 +7,7 @@ import javax.validation.constraints.Pattern;
 public class Transaction {
     @NotNull
     @Min(0)
-    @Pattern(regexp = "\\d*")
+    //@Pattern(regexp = "\\d*")
     long amount;
 
     public Transaction() {
