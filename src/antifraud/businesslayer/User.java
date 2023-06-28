@@ -3,18 +3,14 @@ package antifraud.businesslayer;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+@Getter @Setter
 @Entity
 @Table(name="_user")
 public class User {
@@ -22,7 +18,7 @@ public class User {
     @GeneratedValue
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     long id;
-    @NotBlank
+    @NotBlank(message = "String value, not empty")
     private String name;
     @NotBlank
     private String username;
@@ -30,5 +26,6 @@ public class User {
     @JsonProperty(required = true, access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private String role; // should be prefixed with ROLE_
+    @Enumerated(EnumType.STRING)
+    private Role role; // should be prefixed with ROLE_
 }

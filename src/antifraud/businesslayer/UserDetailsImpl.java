@@ -14,7 +14,7 @@ public class UserDetailsImpl implements UserDetails {
     public UserDetailsImpl(User user) {
         username = user.getUsername();
         password = user.getPassword();
-        rolesAndAuthorities = List.of(new SimpleGrantedAuthority("USER"));
+        rolesAndAuthorities = List.of(new SimpleGrantedAuthority(user.getRole().name()));
     }
 
     @Override
