@@ -1,14 +1,19 @@
 package antifraud.presentation;
 
 import antifraud.businesslayer.Role;
+import antifraud.businesslayer.RoleChanger;
 import antifraud.persistence.UserRepository;
 import antifraud.businesslayer.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
+
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -56,12 +61,9 @@ public class UserController {
 
     @PutMapping("/api/auth/role")
     @ResponseBody
-    public ResponseEntity changeUserRole(@RequestBody Map<String, String> request) {
-        if (!request.containsKey("username") || !request.containsKey("role")) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
-        String username = request.get("username");
-        String role = request.get("role");
+    public ResponseEntity changeUserRole(@Valid @RequestBody RoleChanger roleChanger) {
+        String username = roleChanger.getUsername();
+        String role = roleChanger.getRole();
         Optional<User> user = userRepo.findByUsername(username);
         if (user.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -69,11 +71,15 @@ public class UserController {
         if (Objects.equals(user.get().getRole().name(), role)) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
-        if (!role.matches("(SUPPORT|MERCHANT)")) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+
         user.get().setRole(Role.valueOf(role));
         userRepo.save(user.get());
         return ResponseEntity.status(HttpStatus.OK).body(user);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity handler(
+            MethodArgumentNotValidException e, WebRequest request) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 }

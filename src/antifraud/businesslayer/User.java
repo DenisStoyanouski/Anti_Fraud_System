@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 
 @Data
@@ -18,7 +19,7 @@ public class User {
     @GeneratedValue
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     long id;
-    @NotBlank(message = "String value, not empty")
+    @NotBlank
     private String name;
     @NotBlank
     private String username;
