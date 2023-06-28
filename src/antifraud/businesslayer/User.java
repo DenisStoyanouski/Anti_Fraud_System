@@ -16,7 +16,7 @@ import javax.validation.constraints.NotBlank;
 public class User {
     @Id
     @GeneratedValue
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     long id;
     @NotBlank(message = "String value, not empty")
     private String name;
@@ -25,7 +25,7 @@ public class User {
     @NotBlank
     @JsonProperty(required = true, access = JsonProperty.Access.WRITE_ONLY)
     private String password;
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Enumerated(EnumType.STRING)
     private Role role; // should be prefixed with ROLE_
 }

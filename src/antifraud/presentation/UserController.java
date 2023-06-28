@@ -1,5 +1,6 @@
 package antifraud.presentation;
 
+import antifraud.businesslayer.Role;
 import antifraud.persistence.UserRepository;
 import antifraud.businesslayer.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,11 @@ public class UserController {
         user.setPassword(encoder.encode(user.getPassword()));
         if (userRepo.findByUsername(user.getUsername()).isPresent()) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+        if (userRepo.count() == 0) {
+            user.setRole(Role.ADMINISTRATOR);
+        } else {
+            user.setRole(Role.MERCHANT);
         }
         userRepo.save(user);
         return new ResponseEntity<>(user, HttpStatus.OK);
