@@ -10,6 +10,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 @RestController
 public class UserController {
@@ -50,5 +52,28 @@ public class UserController {
             return ResponseEntity.ok(Map.of("username",  username, "status", "Deleted successfully!"));
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+    @PutMapping("/api/auth/role")
+    @ResponseBody
+    public ResponseEntity changeUserRole(@RequestBody Map<String, String> request) {
+        if (!request.containsKey("username") || !request.containsKey("role")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        String username = request.get("username");
+        String role = request.get("role");
+        Optional<User> user = userRepo.findByUsername(username);
+        if (user.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        if (Objects.equals(user.get().getRole().name(), role)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+        if (!role.matches("(SUPPORT|MERCHANT)")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        user.get().setRole(Role.valueOf(role));
+        userRepo.save(user.get());
+        return ResponseEntity.status(HttpStatus.OK).body(user);
     }
 }

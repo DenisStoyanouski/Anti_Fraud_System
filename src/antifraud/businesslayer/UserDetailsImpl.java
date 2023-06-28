@@ -40,7 +40,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return rolesAndAuthorities.contains(new SimpleGrantedAuthority("ADMINISTRATOR"));
     }
 
     @Override
