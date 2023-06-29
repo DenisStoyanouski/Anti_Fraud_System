@@ -79,6 +79,7 @@ public class UserController {
         }
 
         user.get().setRole(Role.valueOf(role));
+        user.get().setNonLooked(true);
         userRepo.save(user.get());
         return ResponseEntity.status(HttpStatus.OK).body(user);
     }
@@ -99,7 +100,8 @@ public class UserController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.ok(String.format("\"status\": \"User %s %sed!\"", userLocker.getUsername(), userLocker.getOperation().toLowerCase()));
+        String status = String.format("User %s %sed!", userLocker.getUsername(), userLocker.getOperation().toLowerCase());
+        return ResponseEntity.ok(Map.of("status", status));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
