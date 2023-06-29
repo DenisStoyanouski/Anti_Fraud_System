@@ -1,5 +1,6 @@
 package antifraud.businesslayer;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
@@ -29,4 +30,6 @@ public class User {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Enumerated(EnumType.STRING)
     private Role role; // should be prefixed with ROLE_
+    @JsonIgnore
+    private boolean isNonLooked;
 }

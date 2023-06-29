@@ -16,7 +16,7 @@ public class UserDetailsImpl implements UserDetails {
         username = user.getUsername();
         password = user.getPassword();
         rolesAndAuthorities = List.of(new SimpleGrantedAuthority(user.getRole().name()));
-        isNonLooked = rolesAndAuthorities.contains(new SimpleGrantedAuthority("ADMINISTRATOR"));
+        isNonLooked = user.isNonLooked();
     }
 
     public void setNonLooked(boolean isNonLooked) {
@@ -37,7 +37,6 @@ public class UserDetailsImpl implements UserDetails {
     public String getUsername() {
         return username;
     }
-    // 4 remaining methods that just return true
 
     @Override
     public boolean isAccountNonExpired() {

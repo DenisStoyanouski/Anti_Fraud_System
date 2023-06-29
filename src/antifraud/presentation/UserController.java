@@ -5,14 +5,14 @@ import antifraud.persistence.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.validation.Valid;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
@@ -38,8 +38,10 @@ public class UserController {
         }
         if (userRepo.count() == 0) {
             user.setRole(Role.ADMINISTRATOR);
+            user.setNonLooked(true);
         } else {
             user.setRole(Role.MERCHANT);
+            user.setNonLooked(false);
         }
         userRepo.save(user);
         return new ResponseEntity<>(user, HttpStatus.OK);
@@ -83,13 +85,21 @@ public class UserController {
 
     @PutMapping("/api/auth/access")
     @ResponseBody
-    public String unlockedUser(@Valid @RequestBody UserLocker userLocker) {
-        UserDetailsImpl userDetails = userDetailsService.loadUserByUsername(userLocker.getUsername());
-        switch (userLocker.getOperation()) {
-            case "LOCK" -> userDetails.setNonLooked(false);
-            case "UNLOCK" -> userDetails.setNonLooked(true);
+    public ResponseEntity unlockedUser(@Valid @RequestBody UserLocker userLocker) {
+        Optional<User> user = userRepo.findByUsername(userLocker.getUsername());
+        if (user.isPresent()) {
+            if ("ADMINISTRATOR".equals(user.get().getRole().name())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+            switch (userLocker.getOperation()) {
+                case "LOCK" -> user.get().setNonLooked(false);
+                case "UNLOCK" -> user.get().setNonLooked(true);
+            }
+            userRepo.save(user.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return String.format("\"status\": \"User %s %sed!\"", userLocker.getUsername(), userLocker.getOperation().toLowerCase());
+        return ResponseEntity.ok(String.format("\"status\": \"User %s %sed!\"", userLocker.getUsername(), userLocker.getOperation().toLowerCase()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
