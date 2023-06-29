@@ -1,12 +1,11 @@
 package antifraud.presentation;
 
-import antifraud.businesslayer.Role;
-import antifraud.businesslayer.RoleChanger;
+import antifraud.businesslayer.*;
 import antifraud.persistence.UserRepository;
-import antifraud.businesslayer.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -14,9 +13,7 @@ import org.springframework.web.context.request.WebRequest;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 public class UserController {
@@ -26,8 +23,12 @@ public class UserController {
     @Autowired
     PasswordEncoder encoder;
 
+    @Autowired
+    UserDetailsServiceImpl userDetailsService;
+
     @PostMapping("/actuator/shutdown")
-    public void shutdown(){}
+    public void shutdown() {
+    }
 
     @PostMapping("/api/auth/user")
     public ResponseEntity<User> register(@Valid @RequestBody User user) {
@@ -52,9 +53,12 @@ public class UserController {
     @DeleteMapping("/api/auth/user/{username}")
     @ResponseBody
     public ResponseEntity removeUser(@PathVariable String username) {
-        if(userRepo.existsByUsername(username)) {
+        if (userRepo.existsByUsername(username)) {
             userRepo.deleteByUsername(username);
-            return ResponseEntity.ok(Map.of("username",  username, "status", "Deleted successfully!"));
+            Map<String, String> resp = new LinkedHashMap<>();
+            resp.put("username", username);
+            resp.put("status", "Deleted successfully!");
+            return ResponseEntity.ok(resp);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
@@ -75,6 +79,17 @@ public class UserController {
         user.get().setRole(Role.valueOf(role));
         userRepo.save(user.get());
         return ResponseEntity.status(HttpStatus.OK).body(user);
+    }
+
+    @PutMapping("/api/auth/access")
+    @ResponseBody
+    public String unlockedUser(@Valid @RequestBody UserLocker userLocker) {
+        UserDetailsImpl userDetails = userDetailsService.loadUserByUsername(userLocker.getUsername());
+        switch (userLocker.getOperation()) {
+            case "LOCK" -> userDetails.setNonLooked(false);
+            case "UNLOCK" -> userDetails.setNonLooked(true);
+        }
+        return String.format("\"status\": \"User %s %sed!\"", userLocker.getUsername(), userLocker.getOperation().toLowerCase());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

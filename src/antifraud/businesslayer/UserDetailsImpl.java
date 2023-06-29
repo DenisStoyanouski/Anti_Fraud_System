@@ -10,11 +10,17 @@ public class UserDetailsImpl implements UserDetails {
     private final String username;
     private final String password;
     private final List<GrantedAuthority> rolesAndAuthorities;
+    private boolean isNonLooked;
 
     public UserDetailsImpl(User user) {
         username = user.getUsername();
         password = user.getPassword();
         rolesAndAuthorities = List.of(new SimpleGrantedAuthority(user.getRole().name()));
+        isNonLooked = rolesAndAuthorities.contains(new SimpleGrantedAuthority("ADMINISTRATOR"));
+    }
+
+    public void setNonLooked(boolean isNonLooked) {
+        this.isNonLooked = isNonLooked;
     }
 
     @Override
@@ -31,16 +37,15 @@ public class UserDetailsImpl implements UserDetails {
     public String getUsername() {
         return username;
     }
-
     // 4 remaining methods that just return true
+
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
-
     @Override
     public boolean isAccountNonLocked() {
-        return rolesAndAuthorities.contains(new SimpleGrantedAuthority("ADMINISTRATOR"));
+        return isNonLooked;
     }
 
     @Override
