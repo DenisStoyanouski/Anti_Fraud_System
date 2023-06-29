@@ -44,7 +44,7 @@ public class UserController {
             user.setNonLooked(false);
         }
         userRepo.save(user);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
     @GetMapping("/api/auth/list")
