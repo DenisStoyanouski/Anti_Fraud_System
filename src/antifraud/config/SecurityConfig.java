@@ -45,7 +45,7 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.DELETE, "/api/auth/user/**").hasAuthority(Role.ADMINISTRATOR.name())
                 .antMatchers(HttpMethod.POST, "/api/auth/user/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/auth/list/**").hasAnyAuthority(Role.ADMINISTRATOR.name(), Role.SUPPORT.name())
-                .antMatchers(HttpMethod.POST, "/api/antifraud/transaction").hasAuthority(Role.MERCHANT.name())
+                .antMatchers(HttpMethod.POST, "/api/antifraud/**").hasAuthority(Role.MERCHANT.name())
                 .antMatchers(HttpMethod.PUT, "/api/auth/access/**").hasAuthority(Role.ADMINISTRATOR.name())
                 .antMatchers(HttpMethod.PUT, "/api/auth/role/**").hasAuthority(Role.ADMINISTRATOR.name())
                 .antMatchers("/actuator/shutdown").permitAll()// needs to run test
