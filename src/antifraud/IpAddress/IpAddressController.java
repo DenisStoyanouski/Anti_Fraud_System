@@ -20,7 +20,7 @@ public class IpAddressController {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
         ipAddressRepository.save(ipAddress);
-        return ResponseEntity.status(HttpStatus.OK).body(ipAddress);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ipAddress);
     }
 
     @DeleteMapping("/api/antifraud/suspicious-ip/{ip}")
