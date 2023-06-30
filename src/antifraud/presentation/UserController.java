@@ -2,10 +2,15 @@ package antifraud.presentation;
 
 import antifraud.businesslayer.*;
 import antifraud.persistence.UserRepository;
+import com.sun.xml.bind.v2.runtime.output.SAXOutput;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -54,8 +59,8 @@ public class UserController {
 
     @DeleteMapping("/api/auth/user/{username}")
     @ResponseBody
-    public ResponseEntity removeUser(@PathVariable String username) {
-        if (userRepo.existsByUsername(username)) {
+    public ResponseEntity removeUser(@AuthenticationPrincipal UserDetails details, @PathVariable String username) {
+        if (userRepo.existsByUsername(username) && !Objects.equals(username, details.getUsername())) {
             userRepo.deleteByUsername(username);
             Map<String, String> resp = new LinkedHashMap<>();
             resp.put("username", username);
@@ -77,16 +82,19 @@ public class UserController {
         if (Objects.equals(user.get().getRole().name(), role)) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
-
+        if (!user.get().getRole().name().matches("(MERCHANT|SUPPORT)")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
         user.get().setRole(Role.valueOf(role));
         user.get().setNonLooked(true);
         userRepo.save(user.get());
+
         return ResponseEntity.status(HttpStatus.OK).body(user);
     }
 
     @PutMapping("/api/auth/access")
     @ResponseBody
-    public ResponseEntity unlockedUser(@Valid @RequestBody UserLocker userLocker) {
+    public ResponseEntity unlockUser(@Valid @RequestBody UserLocker userLocker) {
         Optional<User> user = userRepo.findByUsername(userLocker.getUsername());
         if (user.isPresent()) {
             if ("ADMINISTRATOR".equals(user.get().getRole().name())) {
