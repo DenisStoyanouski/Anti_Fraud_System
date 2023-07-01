@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
@@ -20,7 +21,7 @@ public class CardController {
     CardRepository cardRepository;
 
     @PostMapping("/api/antifraud/stolencard")
-    public ResponseEntity<Card> addCard(@RequestBody Card card) {
+    public ResponseEntity<Card> addCard(@Valid @RequestBody Card card) {
         if (!isValidNumber(card.getNumber())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }

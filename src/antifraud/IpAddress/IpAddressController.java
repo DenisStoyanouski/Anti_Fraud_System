@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -19,7 +20,7 @@ public class IpAddressController {
     IpAddressRepository ipAddressRepository;
 
     @PostMapping("/api/antifraud/suspicious-ip")
-    public ResponseEntity<IpAddress> addIpAddress(@RequestBody IpAddress ipAddress) {
+    public ResponseEntity<IpAddress> addIpAddress(@Valid @RequestBody IpAddress ipAddress) {
         if (ipAddressRepository.existsByIp(ipAddress.getIp())) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
@@ -48,7 +49,8 @@ public class IpAddressController {
 
     @ExceptionHandler({
             MethodArgumentNotValidException.class,
-            ConstraintViolationException.class
+            ConstraintViolationException.class,
+            IllegalStateException.class
     })
     public ResponseEntity<Object> handleMethodArgumentAndViolation(RuntimeException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
