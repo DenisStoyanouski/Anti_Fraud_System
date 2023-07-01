@@ -48,6 +48,12 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.POST, "/api/antifraud/**").hasAuthority(Role.MERCHANT.name())
                 .antMatchers(HttpMethod.PUT, "/api/auth/access/**").hasAuthority(Role.ADMINISTRATOR.name())
                 .antMatchers(HttpMethod.PUT, "/api/auth/role/**").hasAuthority(Role.ADMINISTRATOR.name())
+                .mvcMatchers(HttpMethod.POST, "/api/antifraud/suspicious-ip").hasAuthority(Role.SUPPORT.name())
+                .mvcMatchers(HttpMethod.DELETE, "/api/antifraud/suspicious-ip/{ip}").hasAuthority(Role.SUPPORT.name())
+                .mvcMatchers(HttpMethod.GET, "/api/antifraud/suspicious-ip").hasAuthority(Role.SUPPORT.name())
+                .mvcMatchers(HttpMethod.POST, "/api/antifraud/stolencard").hasAuthority(Role.SUPPORT.name())
+                .mvcMatchers(HttpMethod.DELETE, "/api/antifraud/stolencard/{number}").hasAuthority(Role.SUPPORT.name())
+                .mvcMatchers(HttpMethod.GET, "/api/antifraud/stolencard").hasAuthority(Role.SUPPORT.name())
                 .antMatchers("/actuator/shutdown").permitAll()// needs to run test
                 .anyRequest().authenticated()
                 // other matchers
