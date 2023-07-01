@@ -1,5 +1,6 @@
 package antifraud.IpAddress;
 
+import antifraud.businesslayer.IpAddressValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,7 @@ public class IpAddressController {
 
     @DeleteMapping("/api/antifraud/suspicious-ip/{ip}")
     public ResponseEntity removeIpAddress(@PathVariable String ip) {
-        if (!ip.matches("^((\\d|[1-9]\\d|1\\d{2}|2[0-4]\\d|25[0-5])(\\.(?!$)|$)){4}$")) {
+        if (!IpAddressValidator.isValidIpAddress(ip)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         if (!ipAddressRepository.existsByIp(ip)) {
