@@ -12,13 +12,20 @@ import java.util.stream.Collectors;
 public class TransactionValidator {
     private final IpAddressService ipAddressService;
     private final CardService cardService;
+
+    private final TransactionRepository transactionRepository;
     private String result;
     private List<String> info;
 
     @Autowired
-    public TransactionValidator(IpAddressService ipAddressService, CardService cardService) {
+    public TransactionValidator(IpAddressService ipAddressService,
+                                CardService cardService,
+                                TransactionRepository transactionRepository)
+    {
         this.ipAddressService = ipAddressService;
         this.cardService = cardService;
+        this.transactionRepository = transactionRepository;
+
     }
 
     public Map<String, String> getResult(Transaction transaction) {

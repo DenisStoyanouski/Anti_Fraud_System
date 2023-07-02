@@ -16,6 +16,8 @@ import javax.validation.Valid;
 import java.util.*;
 
 @RestController
+// TODO: 02.07.2023 Use @RequestMapping("/api/auth") and @XMapping("/user")
+// TODO: 02.07.2023 Use @PreAuthorize("hasRole('ADMINISTRATOR')") instead of antMatchers in Security FilterChain 
 public class UserController {
 
     @Autowired
@@ -47,6 +49,7 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
+    // TODO: 02.07.2023 use @PreAuthorize("hasRole('ADMINISTRATOR')") 
     @GetMapping("/api/auth/list")
     public Iterable<User> getAllUsers() {
         return userRepo.findAll();

@@ -6,11 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 
 
@@ -20,6 +19,9 @@ public class TransactionController {
     @Autowired
     TransactionValidator transactionValidator;
 
+    @Autowired
+    TransactionRepository transactionRepository;
+
     @PostMapping(path = "/api/antifraud/transaction", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<? extends Object> makeTransaction(@Valid @RequestBody Transaction transaction) {
@@ -28,7 +30,17 @@ public class TransactionController {
                 transaction.getAmount() <= 0) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
+        transactionRepository.save(transaction);
         return ResponseEntity.status(HttpStatus.OK).body(transactionValidator.getResult(transaction));
+    }
+
+    @ExceptionHandler({
+            MethodArgumentNotValidException.class,
+            ConstraintViolationException.class,
+            IllegalStateException.class
+    })
+    public ResponseEntity<Object> handleMethodArgumentAndViolation(RuntimeException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
 
