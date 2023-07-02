@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 public class TransactionValidator {
     private final IpAddressService ipAddressService;
     private final CardService cardService;
-
     private final TransactionRepository transactionRepository;
     private String result;
     private List<String> info;

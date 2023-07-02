@@ -29,13 +29,14 @@ public class Transaction {
     @Positive
     long amount;
     @Column(name = "ip_address", nullable = false)
+    @Pattern(regexp = "^((\\d|[1-9]\\d|1\\d{2}|2[0-4]\\d|25[0-5])(\\.(?!$)|$)){4}$")
     String ip;
     @Column(name = "card_number", nullable = false)
     @CreditCardNumber
     String number;
     @Column(name = "region", nullable = false)
     @Pattern(regexp = "(EAP|ECA|HIC|LAC|MENA|SA)")
-    Region region;
+    String region;
     @JsonProperty(value = "date")
     @Column(name = "date", nullable = false)
     LocalDateTime localDateTime;
