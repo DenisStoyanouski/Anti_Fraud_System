@@ -5,10 +5,7 @@ import antifraud.IpAddress.IpAddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,7 +28,7 @@ public class TransactionValidator {
         validateIpAddress(transaction);
         Map<String, String> validationResult = new LinkedHashMap<>();
         validationResult.put("result", result);
-        validationResult.put("info", info.size() == 0 ? "none" : info.stream().sorted().collect(Collectors.joining(",")));
+        validationResult.put("info", info.size() == 0 ? "none" : info.stream().sorted().collect(Collectors.joining(", ")));
         return validationResult;
     }
 
@@ -50,6 +47,9 @@ public class TransactionValidator {
 
     private void validateCardNumber(Transaction transaction) {
         if (cardService.existByNumber(transaction.getNumber())) {
+            if (Objects.equals(result, Result.MANUAL_PROCESSING.name())) {
+                info.remove("amount");
+            }
             result = Result.PROHIBITED.name();
             info.add("card-number");
         }
@@ -57,6 +57,9 @@ public class TransactionValidator {
 
     private void validateIpAddress(Transaction transaction) {
         if (ipAddressService.existByIp(transaction.getIp())) {
+            if (Objects.equals(result, Result.MANUAL_PROCESSING.name())) {
+                info.remove("amount");
+            }
             result = Result.PROHIBITED.name();
             info.add("ip");
         }

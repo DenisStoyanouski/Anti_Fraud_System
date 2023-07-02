@@ -24,7 +24,8 @@ public class TransactionController {
     @ResponseBody
     public ResponseEntity<? extends Object> makeTransaction(@Valid @RequestBody Transaction transaction) {
         if (!CardNumberValidator.isValidNumber(transaction.getNumber()) ||
-                !IpAddressValidator.isValidIpAddress(transaction.getIp())) {
+                !IpAddressValidator.isValidIpAddress(transaction.getIp()) ||
+                transaction.getAmount() <= 0) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         return ResponseEntity.status(HttpStatus.OK).body(transactionValidator.getResult(transaction));

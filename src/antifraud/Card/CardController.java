@@ -27,7 +27,7 @@ public class CardController {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
         cardRepository.save(card);
-        return ResponseEntity.status(HttpStatus.CREATED).body(card);
+        return ResponseEntity.status(HttpStatus.OK).body(card);
     }
 
     @DeleteMapping("/api/antifraud/stolencard/{number}")
@@ -49,17 +49,10 @@ public class CardController {
         return cardRepository.findAll();
     }
 
-
-
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity handler(
             MethodArgumentNotValidException e, WebRequest request) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-    }
-
-    public CardRepository getCardRepository() {
-        return cardRepository;
     }
 }
 

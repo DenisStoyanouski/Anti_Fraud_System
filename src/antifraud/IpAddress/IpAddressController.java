@@ -10,6 +10,7 @@ import org.springframework.web.context.request.WebRequest;
 
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -18,7 +19,6 @@ import java.util.Map;
 @RestController
 public class IpAddressController {
     @Autowired
-    static
     IpAddressRepository ipAddressRepository;
 
     @PostMapping("/api/antifraud/suspicious-ip")
@@ -27,7 +27,7 @@ public class IpAddressController {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
         ipAddressRepository.save(ipAddress);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ipAddress);
+        return ResponseEntity.status(HttpStatus.OK).body(ipAddress);
     }
 
     @DeleteMapping("/api/antifraud/suspicious-ip/{ip}")
@@ -57,9 +57,4 @@ public class IpAddressController {
     public ResponseEntity<Object> handleMethodArgumentAndViolation(RuntimeException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
-
-    public static IpAddressRepository getIpAddressRepository() {
-        return ipAddressRepository;
-    }
-
 }
