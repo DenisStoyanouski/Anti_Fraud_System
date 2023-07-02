@@ -18,6 +18,7 @@ import java.util.Map;
 @RestController
 public class IpAddressController {
     @Autowired
+    static
     IpAddressRepository ipAddressRepository;
 
     @PostMapping("/api/antifraud/suspicious-ip")
@@ -55,6 +56,10 @@ public class IpAddressController {
     })
     public ResponseEntity<Object> handleMethodArgumentAndViolation(RuntimeException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
+
+    public static IpAddressRepository getIpAddressRepository() {
+        return ipAddressRepository;
     }
 
 }

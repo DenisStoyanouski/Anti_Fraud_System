@@ -16,7 +16,6 @@ import javax.validation.Valid;
 @RestController
 public class TransactionController {
 
-
     @PostMapping(path = "/api/antifraud/transaction", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<? extends Object> makeTransaction(@Valid @RequestBody Transaction transaction) {
@@ -24,9 +23,7 @@ public class TransactionController {
                 !IpAddressValidator.isValidIpAddress(transaction.getIp())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        TransactionValidator tr = new TransactionValidator(transaction);
-
-        return ResponseEntity.badRequest().body(tr.getResult());
+        return ResponseEntity.badRequest().body( new TransactionValidator().getResult(transaction));
     }
 
 

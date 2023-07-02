@@ -2,6 +2,8 @@ package antifraud.Card;
 
 import antifraud.businesslayer.CardNumberValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -13,10 +15,8 @@ import java.util.Map;
 
 @RestController
 public class CardController {
-
     @Autowired
     CardRepository cardRepository;
-
 
     @PostMapping("/api/antifraud/stolencard")
     public ResponseEntity<Card> addCard(@Valid @RequestBody Card card) {
@@ -56,6 +56,10 @@ public class CardController {
     public ResponseEntity handler(
             MethodArgumentNotValidException e, WebRequest request) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
+
+    public CardRepository getCardRepository() {
+        return cardRepository;
     }
 }
 
