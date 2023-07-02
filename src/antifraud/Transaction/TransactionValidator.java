@@ -1,31 +1,31 @@
 package antifraud.Transaction;
-import antifraud.Card.Card;
-import antifraud.Card.CardController;
-import antifraud.Card.CardRepository;
+
 import antifraud.Card.CardService;
-import antifraud.IpAddress.IpAddressController;
-import antifraud.IpAddress.IpAddressRepository;
 import antifraud.IpAddress.IpAddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-
+@Service
 public class TransactionValidator {
-    @Autowired
-    IpAddressService ipAddressService;
+    private final IpAddressService ipAddressService;
+    private final CardService cardService;
+    private String result;
+    private List<String> info;
 
     @Autowired
-    CardService cardService;
-
-    static String result;
-    static List<String> info;
+    public TransactionValidator(IpAddressService ipAddressService, CardService cardService) {
+        this.ipAddressService = ipAddressService;
+        this.cardService = cardService;
+    }
 
     public Map<String, String> getResult(Transaction transaction) {
+        info = new ArrayList<>();
         validateAmount(transaction);
         validateCardNumber(transaction);
         validateIpAddress(transaction);

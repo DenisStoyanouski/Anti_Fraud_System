@@ -2,6 +2,7 @@ package antifraud.Transaction;
 
 import antifraud.businesslayer.CardNumberValidator;
 import antifraud.businesslayer.IpAddressValidator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,9 @@ import javax.validation.Valid;
 @RestController
 public class TransactionController {
 
+    @Autowired
+    TransactionValidator transactionValidator;
+
     @PostMapping(path = "/api/antifraud/transaction", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<? extends Object> makeTransaction(@Valid @RequestBody Transaction transaction) {
@@ -23,7 +27,7 @@ public class TransactionController {
                 !IpAddressValidator.isValidIpAddress(transaction.getIp())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        return ResponseEntity.badRequest().body( new TransactionValidator().getResult(transaction));
+        return ResponseEntity.status(HttpStatus.OK).body(transactionValidator.getResult(transaction));
     }
 
 
