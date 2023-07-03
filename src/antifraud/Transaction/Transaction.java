@@ -24,6 +24,7 @@ import java.util.Date;
 public class Transaction {
     @Id
     @GeneratedValue
+    @JsonProperty(value = "transactionId", access = JsonProperty.Access.READ_ONLY)
     long id;
     @Column(name = "amount", nullable = false)
     @Positive
@@ -40,5 +41,9 @@ public class Transaction {
     @JsonProperty(value = "date")
     @Column(name = "date", nullable = false)
     LocalDateTime localDateTime;
+    @Column(name = "result")
+    String result;
+    @Column(name = "feedback")
+    String feedback = "";
 
 }

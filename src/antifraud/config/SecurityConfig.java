@@ -54,6 +54,7 @@ public class SecurityConfig {
                 .mvcMatchers(HttpMethod.POST, "/api/antifraud/stolencard").hasAuthority(Role.SUPPORT.name())
                 .mvcMatchers(HttpMethod.DELETE, "/api/antifraud/stolencard/{number}").hasAuthority(Role.SUPPORT.name())
                 .mvcMatchers(HttpMethod.GET, "/api/antifraud/stolencard").hasAuthority(Role.SUPPORT.name())
+                .mvcMatchers(HttpMethod.PUT, "/api/antifraud/transaction/**").hasAuthority(Role.SUPPORT.name())
                 .antMatchers("/actuator/shutdown").permitAll()// needs to run test
                 .anyRequest().authenticated()
                 // other matchers

@@ -16,7 +16,6 @@ public class TransactionValidator {
     private final TransactionRepository transactionRepository;
     private String result;
     private List<String> info;
-
     private Transaction transaction;
 
     @Autowired
