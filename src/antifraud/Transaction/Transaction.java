@@ -35,7 +35,7 @@ public class Transaction {
     @CreditCardNumber
     String number;
     @Column(name = "region", nullable = false)
-    @Pattern(regexp = "(EAP|ECA|HIC|LAC|MENA|SA)")
+    @Pattern(regexp = "(EAP|ECA|HIC|LAC|MENA|SA|SSA)")
     String region;
     @JsonProperty(value = "date")
     @Column(name = "date", nullable = false)

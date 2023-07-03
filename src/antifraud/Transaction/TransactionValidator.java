@@ -58,6 +58,9 @@ public class TransactionValidator {
 
     private void validateCardNumber() {
         if (cardService.existByNumber(transaction.getNumber())) {
+            if (!Objects.equals(result, Result.PROHIBITED.name())) {
+                info.clear();
+            }
             result = Result.PROHIBITED.name();
             info.add("card-number");
         }
@@ -65,6 +68,9 @@ public class TransactionValidator {
 
     private void validateIpAddress() {
         if (ipAddressService.existByIp(transaction.getIp())) {
+            if (!Objects.equals(result, Result.PROHIBITED.name())) {
+                info.clear();
+            }
             result = Result.PROHIBITED.name();
             info.add("ip");
         }
@@ -103,6 +109,5 @@ public class TransactionValidator {
             }
             info.add("ip-correlation");
         }
-
     }
 }
