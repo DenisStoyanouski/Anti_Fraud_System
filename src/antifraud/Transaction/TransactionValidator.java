@@ -15,8 +15,11 @@ public class TransactionValidator {
     private final CardService cardService;
     private final TransactionRepository transactionRepository;
     private String result;
-    private List<String> info;
+    private List<String> info = new ArrayList<>();
     private Transaction transaction;
+
+    private long maxAllowed = 200;
+    private long maxManualProcessing = 1500;
 
     @Autowired
     public TransactionValidator(IpAddressService ipAddressService,
@@ -30,26 +33,26 @@ public class TransactionValidator {
 
     public Map<String, String> getResult(Transaction transaction) {
         this.transaction = transaction;
-        info = new ArrayList<>();
         validateAmount();
         validateCardNumber();
         validateIpAddress();
         validateRegionLastHour();
         validateIpAddressLastHour();
-        Map<String, String> validationResult = new LinkedHashMap<>();
-        validationResult.put("result", result);
-        validationResult.put("info", info.size() == 0 ? "none" : info.stream().sorted().collect(Collectors.joining(", ")));
-        return validationResult;
+        return formResult();
+    }
+
+    private void updateLimits() {
+
     }
 
     private void validateAmount() {
         long amount = transaction.getAmount();
-        if (amount > 0 && amount <= 200) {
+        if (amount > 0 && amount <= maxAllowed) {
             result = Result.ALLOWED.name();
-        } else if (amount > 200 && amount <= 1500) {
+        } else if (amount > maxAllowed && amount <= maxManualProcessing) {
             result = Result.MANUAL_PROCESSING.name();
             info.add("amount");
-        } else if (amount > 1500) {
+        } else if (amount > maxManualProcessing) {
             result = Result.PROHIBITED.name();
             info.add("amount");
         }
@@ -108,5 +111,12 @@ public class TransactionValidator {
             }
             info.add("ip-correlation");
         }
+    }
+
+    private Map<String, String> formResult() {
+        Map<String, String> validationResult = new LinkedHashMap<>();
+        validationResult.put("result", result);
+        validationResult.put("info", info.size() == 0 ? "none" : info.stream().sorted().collect(Collectors.joining(", ")));
+        return validationResult;
     }
 }

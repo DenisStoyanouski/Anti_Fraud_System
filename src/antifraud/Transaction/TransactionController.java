@@ -50,7 +50,8 @@ public class TransactionController {
             if (Objects.equals(transactionRepository.findById(feedback.transactionId()).get().getResult(), feedback.feedback().name())) {
                 return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
             }
-            if (Objects.equals(transactionRepository.findById(feedback.transactionId()).get().getFeedback(), feedback.feedback().name()5)) {
+            if (Objects.equals(transactionRepository.findById(feedback.transactionId()).get().getFeedback(), feedback.feedback().name()) ||
+            !"".equals(transactionRepository.findById(feedback.transactionId()).get().getFeedback())) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).build();
             }
             Transaction transaction = transactionRepository.findById(feedback.transactionId()).get();
