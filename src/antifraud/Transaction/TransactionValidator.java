@@ -77,7 +77,7 @@ public class TransactionValidator {
 
     private void validateRegionLastHour() {
         long numberOfRegions = transactionRepository.countTransactionsFromTwoAnotherRegionsInLastHour(
-                transaction.getRegion(),
+                transaction.getRegion().name(),
                 transaction.getLocalDateTime().minus(1, ChronoUnit.HOURS),
                 transaction.getLocalDateTime());
 

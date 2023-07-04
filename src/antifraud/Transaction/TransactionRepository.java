@@ -1,9 +1,11 @@
 package antifraud.Transaction;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
     /*There are transactions from 2 regions of the world other than the region of the transaction that is being
@@ -20,4 +22,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             "WHERE ip_address NOT LIKE ?1"
             , nativeQuery = true)
     Long countTransactionsFromTwoAnotherIpAddressInLastHour(String idAddress, LocalDateTime from, LocalDateTime to);
+    List<Transaction> findAllByNumber(String number, Sort sort);
+
 }

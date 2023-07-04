@@ -15,7 +15,15 @@ import javax.validation.constraints.Pattern;
 @Table(name="card")
 public class Card {
     @Id
-    @GeneratedValue
+    @SequenceGenerator(
+            name = "card_id_seq",
+            sequenceName = "card_id_seq",
+            allocationSize = 1
+    )
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "card_id_seq"
+    )
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     long id;
 

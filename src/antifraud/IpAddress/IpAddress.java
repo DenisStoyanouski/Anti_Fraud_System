@@ -17,7 +17,15 @@ import javax.validation.constraints.Pattern;
 @Table(name="ip_address")
 public class IpAddress {
     @Id
-    @GeneratedValue
+    @SequenceGenerator(
+            name = "ip_address_id_seq",
+            sequenceName = "ip_address_id_seq",
+            allocationSize = 1
+    )
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "ip_address_id_seq"
+    )
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     long id;
 

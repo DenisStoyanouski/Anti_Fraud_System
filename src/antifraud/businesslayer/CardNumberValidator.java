@@ -1,11 +1,14 @@
 package antifraud.businesslayer;
 
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.Collectors;
-
+@Component
 public class CardNumberValidator {
-    public static boolean isValidNumber(String cardNumber) {
+    public boolean isValidNumber(String cardNumber) {
         ArrayList<Integer> number = Arrays.stream(cardNumber.split(""))
                 .map(Integer::parseInt).collect(Collectors.toCollection(ArrayList::new));
         // The Luhn algorithm

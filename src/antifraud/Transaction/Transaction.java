@@ -36,7 +36,15 @@ import java.util.Date;
 })
 public class Transaction {
     @Id
-    @GeneratedValue
+    @SequenceGenerator(
+            name = "transaction_id_seq",
+            sequenceName = "transaction_id_seq",
+            allocationSize = 1
+    )
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "transaction_id_seq"
+    )
     @JsonProperty(value = "transactionId", access = JsonProperty.Access.READ_ONLY)
     long id;
     @Column(name = "amount", nullable = false)
@@ -49,8 +57,9 @@ public class Transaction {
     @CreditCardNumber
     String number;
     @Column(name = "region", nullable = false)
-    @Pattern(regexp = "(EAP|ECA|HIC|LAC|MENA|SA|SSA)")
-    String region;
+    //@Pattern(regexp = "(EAP|ECA|HIC|LAC|MENA|SA|SSA)")
+    @Enumerated(EnumType.STRING)
+    Region region;
     @JsonProperty(value = "date")
     @Column(name = "date", nullable = false)
     LocalDateTime localDateTime;
@@ -58,5 +67,4 @@ public class Transaction {
     String result;
     @Column(name = "feedback")
     String feedback = "";
-
 }

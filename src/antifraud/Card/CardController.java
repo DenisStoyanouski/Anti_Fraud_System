@@ -18,9 +18,12 @@ public class CardController {
     @Autowired
     CardRepository cardRepository;
 
+    @Autowired
+    CardNumberValidator cardNumberValidator;
+
     @PostMapping("/api/antifraud/stolencard")
     public ResponseEntity<Card> addCard(@Valid @RequestBody Card card) {
-        if (!CardNumberValidator.isValidNumber(card.getNumber())) {
+        if (!cardNumberValidator.isValidNumber(card.getNumber())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         if (cardRepository.existsByNumber(card.getNumber())) {
@@ -32,7 +35,7 @@ public class CardController {
 
     @DeleteMapping("/api/antifraud/stolencard/{number}")
     public ResponseEntity removeCard(@PathVariable String number) {
-        if (!CardNumberValidator.isValidNumber(number)) {
+        if (!cardNumberValidator.isValidNumber(number)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         if (!cardRepository.existsByNumber(number)) {
