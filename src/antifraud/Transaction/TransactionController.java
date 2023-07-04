@@ -4,6 +4,7 @@ import antifraud.businesslayer.CardNumberValidator;
 import antifraud.businesslayer.IpAddressValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -52,11 +54,18 @@ public class TransactionController {
             if (Objects.equals(transactionRepository.findById(feedback.transactionId()).get().getFeedback(), feedback.feedback())) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).build();
             }
-            transactionRepository.findById(feedback.transactionId()).get().setFeedback(feedback.feedback());
+            Transaction transaction = transactionRepository.findById(feedback.transactionId()).get();
+            transaction.setFeedback(feedback.feedback());
+            transactionRepository.save(transaction);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         return ResponseEntity.status(HttpStatus.OK).body(transactionRepository.findById(feedback.transactionId()));
+    }
+
+    @GetMapping(path= "/history")
+    public List<Transaction> findAll() {
+        return transactionRepository.findAll(Sort.by("id").descending());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
