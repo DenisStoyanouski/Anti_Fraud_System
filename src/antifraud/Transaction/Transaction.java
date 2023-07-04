@@ -1,7 +1,9 @@
 package antifraud.Transaction;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.*;
 import org.hibernate.validator.constraints.CreditCardNumber;
 
@@ -21,6 +23,17 @@ import java.util.Date;
 @Setter
 @Entity
 @Table(name = "transaction")
+
+@JsonPropertyOrder({
+        "transactionId",
+        "amount",
+        "ip",
+        "number",
+        "region",
+        "date",
+        "result",
+        "feedback"
+})
 public class Transaction {
     @Id
     @GeneratedValue

@@ -56,7 +56,7 @@ public class TransactionController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.status(HttpStatus.OK).body("transaction");
+        return ResponseEntity.status(HttpStatus.OK).body(transactionRepository.findById(feedback.transactionId()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
