@@ -1,19 +1,14 @@
 package antifraud.Transaction;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.*;
 import org.hibernate.validator.constraints.CreditCardNumber;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 
 @Data
@@ -57,7 +52,6 @@ public class Transaction {
     @CreditCardNumber
     String number;
     @Column(name = "region", nullable = false)
-    //@Pattern(regexp = "(EAP|ECA|HIC|LAC|MENA|SA|SSA)")
     @Enumerated(EnumType.STRING)
     Region region;
     @JsonProperty(value = "date")

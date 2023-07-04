@@ -6,5 +6,6 @@ public enum Region {
     HIC,
     LAC,
     MENA,
-    SA
+    SA,
+    SSA
 }

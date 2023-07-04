@@ -47,14 +47,14 @@ public class TransactionController {
     @ResponseBody
     public ResponseEntity<Object> addFeedback(@Valid @RequestBody Feedback feedback) {
         if (transactionRepository.existsById(feedback.transactionId())) {
-            if (Objects.equals(transactionRepository.findById(feedback.transactionId()).get().getResult(), feedback.feedback())) {
+            if (Objects.equals(transactionRepository.findById(feedback.transactionId()).get().getResult(), feedback.feedback().name())) {
                 return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
             }
-            if (Objects.equals(transactionRepository.findById(feedback.transactionId()).get().getFeedback(), feedback.feedback())) {
+            if (Objects.equals(transactionRepository.findById(feedback.transactionId()).get().getFeedback(), feedback.feedback().name()5)) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).build();
             }
             Transaction transaction = transactionRepository.findById(feedback.transactionId()).get();
-            transaction.setFeedback(feedback.feedback());
+            transaction.setFeedback(feedback.feedback().name());
             transactionRepository.save(transaction);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
