@@ -14,25 +14,27 @@ public class TransactionValidator {
     private final IpAddressService ipAddressService;
     private final CardService cardService;
     private final TransactionRepository transactionRepository;
-    private String result;
-    private List<String> info = new ArrayList<>();
-    private Transaction transaction;
 
-    private long maxAllowed = 200;
-    private long maxManualProcessing = 1500;
+    private final Limiter limiter;
+    private String result;
+    private List<String> info;
+    private Transaction transaction;
 
     @Autowired
     public TransactionValidator(IpAddressService ipAddressService,
                                 CardService cardService,
-                                TransactionRepository transactionRepository) {
+                                TransactionRepository transactionRepository,
+                                Limiter limiter)
+    {
         this.ipAddressService = ipAddressService;
         this.cardService = cardService;
         this.transactionRepository = transactionRepository;
-
+        this.limiter = limiter;
     }
 
     public Map<String, String> getResult(Transaction transaction) {
         this.transaction = transaction;
+        info = new ArrayList<>();
         validateAmount();
         validateCardNumber();
         validateIpAddress();
@@ -41,18 +43,18 @@ public class TransactionValidator {
         return formResult();
     }
 
-    private void updateLimits() {
-
-    }
-
     private void validateAmount() {
         long amount = transaction.getAmount();
-        if (amount > 0 && amount <= maxAllowed) {
+        limiter.setNumber(transaction.getNumber());
+        long maxAllowedLimit = limiter.getMaxAllowedLimit();
+        long maxManualLimit = limiter.getMaxManualLimit();
+
+        if (amount > 0 && amount <= maxAllowedLimit) {
             result = Result.ALLOWED.name();
-        } else if (amount > maxAllowed && amount <= maxManualProcessing) {
+        } else if (amount > maxAllowedLimit && amount <= maxManualLimit) {
             result = Result.MANUAL_PROCESSING.name();
             info.add("amount");
-        } else if (amount > maxManualProcessing) {
+        } else if (amount > maxManualLimit) {
             result = Result.PROHIBITED.name();
             info.add("amount");
         }
