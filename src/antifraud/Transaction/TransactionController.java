@@ -45,7 +45,6 @@ public class TransactionController {
     public ResponseEntity<? extends Object> makeTransaction(@Valid @RequestBody Transaction transaction) {
         Map<String, String> validatorResult = transactionValidator.getResult(transaction);
         transaction.setResult(Result.valueOf(validatorResult.get("result")));
-        transactionRepository.save(transaction);
         if (!limitService.existsByNumber(transaction.getNumber())) {
             limitService.saveLimit(Limit.builder()
                     .number(transaction.getNumber())
@@ -53,6 +52,8 @@ public class TransactionController {
                     .maxManual(1500)
                     .build());
         }
+        transaction.setFeedback("");
+        transactionRepository.save(transaction);
         return ResponseEntity.status(HttpStatus.OK).body(validatorResult);
     }
 
@@ -60,15 +61,15 @@ public class TransactionController {
     @ResponseBody
     public ResponseEntity<Object> addFeedback(@Valid @RequestBody Feedback feedback) {
         if (transactionRepository.existsById(feedback.transactionId())) {
-            if (Objects.equals(transactionRepository.findById(feedback.transactionId()).get().getResult(), feedback.feedback().name())) {
+            if (Objects.equals(transactionRepository.findById(feedback.transactionId()).get().getResult(), feedback.feedback())) {
                 return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
             }
-            if (Objects.equals(transactionRepository.findById(feedback.transactionId()).get().getFeedback().name(), feedback.feedback().name()) ||
-                    !"".equals(transactionRepository.findById(feedback.transactionId()).get().getFeedback().name())) {
+            if (Objects.equals(transactionRepository.findById(feedback.transactionId()).get().getFeedback(), feedback.feedback().name()) ||
+                    !"".equals(transactionRepository.findById(feedback.transactionId()).get().getFeedback())) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).build();
             }
             Transaction transaction = transactionRepository.findById(feedback.transactionId()).get();
-            transaction.setFeedback(feedback.feedback());
+            transaction.setFeedback(feedback.feedback().name());
             transactionRepository.save(transaction);
             limitService.changeLimit(transaction);
         } else {

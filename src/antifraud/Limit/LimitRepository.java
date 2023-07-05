@@ -7,5 +7,5 @@ import java.util.Optional;
 public interface LimitRepository extends JpaRepository<Limit, Long> {
     Optional<Limit> findByNumber(String number);
 
-    boolean existByNumber(String number);
+    boolean existsByNumber(String number);
 }

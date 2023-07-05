@@ -24,7 +24,6 @@ public class UserController {
     UserRepository userRepo;
     @Autowired
     PasswordEncoder encoder;
-
     @Autowired
     UserDetailsServiceImpl userDetailsService;
 

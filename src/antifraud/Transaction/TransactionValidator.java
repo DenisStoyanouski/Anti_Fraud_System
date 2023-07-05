@@ -47,14 +47,15 @@ public class TransactionValidator {
 
     private void validateAmount() {
         long amount = transaction.getAmount();
-        Limit limit = limitService.findByNumber(transaction.getNumber()).get();
+        long maxAllowed = limitService.getMaxAllowedLimitByNumber(transaction.getNumber());
+        long maxManual = limitService.getMaxManualLimitByNumber(transaction.getNumber());
 
-        if (amount > 0 && amount <= limit.getMaxAllowed()) {
+        if (amount > 0 && amount <= maxAllowed) {
             result = Result.ALLOWED;
-        } else if (amount > limit.getMaxAllowed() && amount <= limit.getMaxManual()) {
+        } else if (amount > maxAllowed && amount <= maxManual) {
             result = Result.MANUAL_PROCESSING;
             info.add("amount");
-        } else if (amount > limit.getMaxManual()) {
+        } else if (amount > maxManual) {
             result = Result.PROHIBITED;
             info.add("amount");
         }

@@ -14,7 +14,7 @@ import javax.validation.constraints.Pattern;
 @NoArgsConstructor
 @Getter @Setter
 @Entity
-@Table(name="ip_address")
+@Table(name = "ip_address")
 public class IpAddress {
     @Id
     @SequenceGenerator(

@@ -1,9 +1,9 @@
 package antifraud.Transaction;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.*;
 import lombok.*;
 import org.hibernate.validator.constraints.CreditCardNumber;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
@@ -57,8 +57,12 @@ public class Transaction {
     @JsonProperty(value = "date")
     @Column(name = "date", nullable = false)
     LocalDateTime localDateTime;
+
     @Column(name = "result")
+    @Enumerated(EnumType.STRING)
     Result result;
+
     @Column(name = "feedback")
-    Result feedback;
+    String feedback;
+
 }

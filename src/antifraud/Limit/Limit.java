@@ -1,6 +1,5 @@
 package antifraud.Limit;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import javax.persistence.*;
@@ -13,9 +12,9 @@ import javax.persistence.*;
 @Setter
 @Entity
 @Builder
-@Table(name="limit")
+@Table(name = "amount_limit")
 public class Limit {
-    @Id()
+    @Id
     @SequenceGenerator(
             name = "limit_id_seq",
             sequenceName = "limit_id_seq",
@@ -26,10 +25,13 @@ public class Limit {
             generator = "limit_id_seq"
     )
     long id;
-    @Column(unique = true, nullable = false)
+
+    @Column(name = "number", unique = true, nullable = false)
     private String number;
-    @Column(nullable = false)
+
+    @Column(name = "max_allowed_limit",nullable = false)
     private long maxAllowed;
-    @Column(nullable = false)
+
+    @Column(name = "max_manual_limit", nullable = false)
     private long maxManual;
 }
