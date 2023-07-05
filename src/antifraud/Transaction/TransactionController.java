@@ -1,5 +1,7 @@
 package antifraud.Transaction;
 
+import antifraud.Limit.Limit;
+import antifraud.Limit.LimitRepository;
 import antifraud.businesslayer.CardNumberValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -33,6 +35,9 @@ public class TransactionController {
     @Autowired
     CardNumberValidator cardNumberValidator;
 
+    @Autowired
+    LimitRepository limitRepository;
+
 
     @PostMapping(path = "/transaction", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -40,6 +45,13 @@ public class TransactionController {
         Map<String, String> validatorResult = transactionValidator.getResult(transaction);
         transaction.setResult(validatorResult.get("result"));
         transactionRepository.save(transaction);
+        if (!limitRepository.existByNumber(transaction.getNumber())) {
+            limitRepository.save(Limit.builder()
+                    .number(transaction.getNumber())
+                    .maxAllowed(200)
+                    .maxManual(1500)
+                    .build());
+        }
         return ResponseEntity.status(HttpStatus.OK).body(validatorResult);
     }
 

@@ -4,12 +4,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 @Component
+@Deprecated
 public class Limiter {
     final private TransactionRepository transactionRepository;
-
     private String number;
+
+    private Map<String, Long> limits;
 
     @Autowired
     Limiter(TransactionRepository transactionRepository) {
@@ -18,6 +23,7 @@ public class Limiter {
 
     public void setNumber(String number) {
         this.number = number;
+        this.limits = new HashMap<>();
     }
 
     public long getMaxAllowedLimit() {

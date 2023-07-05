@@ -10,4 +10,5 @@ public interface CardRepository extends CrudRepository<Card, Long> {
 
     @Transactional
     void deleteByNumber(String number);
+
 }
