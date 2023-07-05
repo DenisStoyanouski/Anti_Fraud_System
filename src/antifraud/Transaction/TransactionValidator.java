@@ -2,6 +2,8 @@ package antifraud.Transaction;
 
 import antifraud.Card.CardService;
 import antifraud.IpAddress.IpAddressService;
+import antifraud.Limit.Limit;
+import antifraud.Limit.LimitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,8 @@ public class TransactionValidator {
     private final IpAddressService ipAddressService;
     private final CardService cardService;
     private final TransactionRepository transactionRepository;
+
+    private final LimitService limitService;
     private Result result;
     private List<String> info;
     private Transaction transaction;
@@ -21,11 +25,13 @@ public class TransactionValidator {
     @Autowired
     public TransactionValidator(IpAddressService ipAddressService,
                                 CardService cardService,
-                                TransactionRepository transactionRepository)
+                                TransactionRepository transactionRepository,
+                                LimitService limitService)
     {
         this.ipAddressService = ipAddressService;
         this.cardService = cardService;
         this.transactionRepository = transactionRepository;
+        this.limitService = limitService;
     }
 
     public Map<String, String> getResult(Transaction transaction) {
@@ -41,13 +47,14 @@ public class TransactionValidator {
 
     private void validateAmount() {
         long amount = transaction.getAmount();
+        Limit limit = limitService.findByNumber(transaction.getNumber()).get();
 
-        if (amount > 0 && amount <= 200) {
+        if (amount > 0 && amount <= limit.getMaxAllowed()) {
             result = Result.ALLOWED;
-        } else if (amount > 200 && amount <= 1500) {
+        } else if (amount > limit.getMaxAllowed() && amount <= limit.getMaxManual()) {
             result = Result.MANUAL_PROCESSING;
             info.add("amount");
-        } else if (amount > 1500) {
+        } else if (amount > limit.getMaxManual()) {
             result = Result.PROHIBITED;
             info.add("amount");
         }
