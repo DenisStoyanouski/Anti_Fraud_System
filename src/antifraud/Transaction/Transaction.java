@@ -58,7 +58,7 @@ public class Transaction {
     @Column(name = "date", nullable = false)
     LocalDateTime localDateTime;
     @Column(name = "result")
-    String result;
+    Result result;
     @Column(name = "feedback")
-    String feedback = "";
+    Result feedback;
 }

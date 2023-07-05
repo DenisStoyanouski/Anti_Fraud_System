@@ -2,6 +2,7 @@ package antifraud.Transaction;
 
 import antifraud.Limit.Limit;
 import antifraud.Limit.LimitRepository;
+import antifraud.Limit.LimitService;
 import antifraud.businesslayer.CardNumberValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -36,17 +37,17 @@ public class TransactionController {
     CardNumberValidator cardNumberValidator;
 
     @Autowired
-    LimitRepository limitRepository;
+    LimitService limitService;
 
 
     @PostMapping(path = "/transaction", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<? extends Object> makeTransaction(@Valid @RequestBody Transaction transaction) {
         Map<String, String> validatorResult = transactionValidator.getResult(transaction);
-        transaction.setResult(validatorResult.get("result"));
+        transaction.setResult(Result.valueOf(validatorResult.get("result")));
         transactionRepository.save(transaction);
-        if (!limitRepository.existByNumber(transaction.getNumber())) {
-            limitRepository.save(Limit.builder()
+        if (!limitService.existsByNumber(transaction.getNumber())) {
+            limitService.saveLimit(Limit.builder()
                     .number(transaction.getNumber())
                     .maxAllowed(200)
                     .maxManual(1500)
@@ -62,13 +63,14 @@ public class TransactionController {
             if (Objects.equals(transactionRepository.findById(feedback.transactionId()).get().getResult(), feedback.feedback().name())) {
                 return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
             }
-            if (Objects.equals(transactionRepository.findById(feedback.transactionId()).get().getFeedback(), feedback.feedback().name()) ||
-                    !"".equals(transactionRepository.findById(feedback.transactionId()).get().getFeedback())) {
+            if (Objects.equals(transactionRepository.findById(feedback.transactionId()).get().getFeedback().name(), feedback.feedback().name()) ||
+                    !"".equals(transactionRepository.findById(feedback.transactionId()).get().getFeedback().name())) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).build();
             }
             Transaction transaction = transactionRepository.findById(feedback.transactionId()).get();
-            transaction.setFeedback(feedback.feedback().name());
+            transaction.setFeedback(feedback.feedback());
             transactionRepository.save(transaction);
+            limitService.changeLimit(transaction);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }

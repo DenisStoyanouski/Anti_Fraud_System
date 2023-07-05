@@ -14,22 +14,18 @@ public class TransactionValidator {
     private final IpAddressService ipAddressService;
     private final CardService cardService;
     private final TransactionRepository transactionRepository;
-
-    private final Limiter limiter;
-    private String result;
+    private Result result;
     private List<String> info;
     private Transaction transaction;
 
     @Autowired
     public TransactionValidator(IpAddressService ipAddressService,
                                 CardService cardService,
-                                TransactionRepository transactionRepository,
-                                Limiter limiter)
+                                TransactionRepository transactionRepository)
     {
         this.ipAddressService = ipAddressService;
         this.cardService = cardService;
         this.transactionRepository = transactionRepository;
-        this.limiter = limiter;
     }
 
     public Map<String, String> getResult(Transaction transaction) {
@@ -45,37 +41,34 @@ public class TransactionValidator {
 
     private void validateAmount() {
         long amount = transaction.getAmount();
-        limiter.setNumber(transaction.getNumber());
-        long maxAllowedLimit = limiter.getMaxAllowedLimit();
-        long maxManualLimit = limiter.getMaxManualLimit();
 
-        if (amount > 0 && amount <= maxAllowedLimit) {
-            result = Result.ALLOWED.name();
-        } else if (amount > maxAllowedLimit && amount <= maxManualLimit) {
-            result = Result.MANUAL_PROCESSING.name();
+        if (amount > 0 && amount <= 200) {
+            result = Result.ALLOWED;
+        } else if (amount > 200 && amount <= 1500) {
+            result = Result.MANUAL_PROCESSING;
             info.add("amount");
-        } else if (amount > maxManualLimit) {
-            result = Result.PROHIBITED.name();
+        } else if (amount > 1500) {
+            result = Result.PROHIBITED;
             info.add("amount");
         }
     }
 
     private void validateCardNumber() {
         if (cardService.existByNumber(transaction.getNumber())) {
-            if (!Objects.equals(result, Result.PROHIBITED.name())) {
+            if (!Objects.equals(result, Result.PROHIBITED)) {
                 info.clear();
             }
-            result = Result.PROHIBITED.name();
+            result = Result.PROHIBITED;
             info.add("card-number");
         }
     }
 
     private void validateIpAddress() {
         if (ipAddressService.existByIp(transaction.getIp())) {
-            if (!Objects.equals(result, Result.PROHIBITED.name())) {
+            if (!Objects.equals(result, Result.PROHIBITED)) {
                 info.clear();
             }
-            result = Result.PROHIBITED.name();
+            result = Result.PROHIBITED;
             info.add("ip");
         }
     }
@@ -86,12 +79,12 @@ public class TransactionValidator {
                 transaction.getLocalDateTime().minus(1, ChronoUnit.HOURS),
                 transaction.getLocalDateTime());
 
-        if (numberOfRegions == 2 && !Objects.equals(result, Result.PROHIBITED.name())) {
-            result = Result.MANUAL_PROCESSING.name();
+        if (numberOfRegions == 2 && !Objects.equals(result, Result.PROHIBITED)) {
+            result = Result.MANUAL_PROCESSING;
             info.add("region-correlation");
         } else if (numberOfRegions > 2) {
-            if (!Objects.equals(result, Result.PROHIBITED.name())) {
-                result = Result.PROHIBITED.name();
+            if (!Objects.equals(result, Result.PROHIBITED)) {
+                result = Result.PROHIBITED;
                 info.clear();
             }
             info.add("region-correlation");
@@ -103,12 +96,12 @@ public class TransactionValidator {
                 transaction.getIp(),
                 transaction.getLocalDateTime().minus(1, ChronoUnit.HOURS),
                 transaction.getLocalDateTime());
-        if (numberOfAddresses == 2 && !Objects.equals(result, Result.PROHIBITED.name())) {
-            result = Result.MANUAL_PROCESSING.name();
+        if (numberOfAddresses == 2 && !Objects.equals(result, Result.PROHIBITED)) {
+            result = Result.MANUAL_PROCESSING;
             info.add("ip-correlation");
         } else if (numberOfAddresses > 2) {
-            if (!Objects.equals(result, Result.PROHIBITED.name())) {
-                result = Result.PROHIBITED.name();
+            if (!Objects.equals(result, Result.PROHIBITED)) {
+                result = Result.PROHIBITED;
                 info.clear();
             }
             info.add("ip-correlation");
@@ -117,7 +110,7 @@ public class TransactionValidator {
 
     private Map<String, String> formResult() {
         Map<String, String> validationResult = new LinkedHashMap<>();
-        validationResult.put("result", result);
+        validationResult.put("result", result.name());
         validationResult.put("info", info.size() == 0 ? "none" : info.stream().sorted().collect(Collectors.joining(", ")));
         return validationResult;
     }

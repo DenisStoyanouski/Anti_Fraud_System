@@ -5,5 +5,4 @@ public enum Result {
     MANUAL_PROCESSING,
     PROHIBITED
 
-
 }
