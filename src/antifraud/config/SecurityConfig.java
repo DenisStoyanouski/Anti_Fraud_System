@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @Configuration
 @EnableWebSecurity
@@ -56,7 +57,9 @@ public class SecurityConfig {
                 .mvcMatchers(HttpMethod.GET, "/api/antifraud/stolencard").hasAuthority(Role.SUPPORT.name())
                 .mvcMatchers(HttpMethod.PUT, "/api/antifraud/transaction/**").hasAuthority(Role.SUPPORT.name())
                 .mvcMatchers(HttpMethod.GET, "/api/antifraud/history/**").hasAuthority(Role.SUPPORT.name())
-                .antMatchers("/actuator/shutdown").permitAll()// needs to run test
+                .antMatchers("/actuator/shutdown").permitAll()
+                .antMatchers("/api-docs/**").permitAll()// needs to run test
+                .antMatchers("/swagger-ui/**").permitAll()
                 .anyRequest().authenticated()
                 // other matchers
                 .and()
