@@ -1,4 +1,4 @@
-package antifraud.Transaction;
+package antifraud.Exception;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +17,7 @@ public class ControllerExceptionHandler {
             ConstraintViolationException.class,
             IllegalStateException.class
     })
-    public ResponseEntity<Object> handleFlightAndTicketNotFound(RuntimeException e) {
+    public ResponseEntity<Object> handleAllException(RuntimeException e) {
         return ResponseEntity.badRequest().build();
     }
 

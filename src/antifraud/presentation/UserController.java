@@ -32,6 +32,7 @@ public class UserController {
     @Autowired
     UserDetailsServiceImpl userDetailsService;
 
+    @Operation(summary = "Shutdown service")
     @PostMapping("/actuator/shutdown")
     public void shutdown() {
     }

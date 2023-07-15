@@ -1,4 +1,4 @@
-package antifraud.businesslayer;
+package antifraud.IpAddress;
 
 public class IpAddressValidator {
     public static boolean isValidIpAddress(String ipAddress) {
